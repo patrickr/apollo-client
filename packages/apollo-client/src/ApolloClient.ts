@@ -35,6 +35,7 @@ export interface DefaultOptions {
   watchQuery?: Partial<WatchQueryOptions>;
   query?: Partial<QueryOptions>;
   mutate?: Partial<MutationOptions>;
+  subscribe?: Partial<SubscriptionOptions>;
 }
 
 let hasSuggestedDevtools = false;
@@ -355,6 +356,12 @@ export default class ApolloClient<TCacheShape> implements DataProxy {
   public subscribe<T = any, TVariables = OperationVariables>(
     options: SubscriptionOptions<TVariables>,
   ): Observable<FetchResult<T>> {
+    if (this.defaultOptions.subscribe) {
+      options = {
+        ...this.defaultOptions.subscribe,
+        ...options,
+      } as SubscriptionOptions<TVariables>;
+    }
     return this.queryManager.startGraphQLSubscription<T>(options);
   }
 
